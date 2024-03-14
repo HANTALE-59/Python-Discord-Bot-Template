@@ -48,37 +48,20 @@ class MagarcaneSelect(discord.ui.Select):
         )
 
     async def callback(self, interaction: discord.Interaction) -> None:
-        choices = {
-            "rock": 0,
-            "paper": 1,
-            "scissors": 2,
-        }
-        user_choice = self.values[0].lower()
-        user_choice_index = choices[user_choice]
+        selected_option = self.values[0]  # Récupère la première (et seule) option sélectionnée
+		bot = ctx.guild.get_member(self.bot.user.id)
+		
+        if selected_option == "Découvre Magarcane":
+	    	embrep = discord.Embed(title=selected_option,description=resumeMagarcane,color=bot.color)
+            await interaction.response.send_message("Option 1 choisis", ephemeral=True)
+        elif selected_option == "Personnage":
+			embrep = discord.Embed(title=selected_option,description=random.choice(liste_personnage))
+            await interaction.response.send_message("Option 2 choisis", ephemeral=True)
+        elif selected_option == "Random fact":
+			embrep = discord.Embed(title=selected_option,description=random.choice(liste_anecdote))
+            await interaction.response.send_message("Option 3 choisis", ephemeral=True)
 
-        bot_choice = random.choice(list(choices.keys()))
-        bot_choice_index = choices[bot_choice]
-
-        result_embed = discord.Embed(color=0xBEBEFE)
-        result_embed.set_author(
-            name=interaction.user.name, icon_url=interaction.user.display_avatar.url
-        )
-
-        winner = (3 + user_choice_index - bot_choice_index) % 3
-        if winner == 0:
-            result_embed.description = f"**That's a draw!**\nYou've chosen {user_choice} and I've chosen {bot_choice}."
-            result_embed.colour = 0xF59E42
-        elif winner == 1:
-            result_embed.description = f"**You won!**\nYou've chosen {user_choice} and I've chosen {bot_choice}."
-            result_embed.colour = 0x57F287
-        else:
-            result_embed.description = f"**You lost!**\nYou've chosen {user_choice} and I've chosen {bot_choice}."
-            result_embed.colour = 0xE02B2B
-
-        await interaction.response.edit_message(
-            embed=result_embed, content=None, view=None
-        )
-
+		await ctx.send(embed=embrep)
 
 class RockPaperScissorsView(discord.ui.View):
     def __init__(self) -> None:
