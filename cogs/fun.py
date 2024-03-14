@@ -20,35 +20,28 @@ class Choice(discord.ui.View):
         self.value = None
 
     @discord.ui.button(label="Heads", style=discord.ButtonStyle.blurple)
-    async def confirm(
-        self, button: discord.ui.Button, interaction: discord.Interaction
-    ) -> None:
+    async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
         self.value = "heads"
         self.stop()
 
     @discord.ui.button(label="Tails", style=discord.ButtonStyle.blurple)
-    async def cancel(
-        self, button: discord.ui.Button, interaction: discord.Interaction
-    ) -> None:
+    async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
         self.value = "tails"
         self.stop()
 
 
-class RockPaperScissors(discord.ui.Select):
+class MagarcaneSelect(discord.ui.Select):
     def __init__(self) -> None:
         options = [
             discord.SelectOption(
-                label="Scissors", description="You choose scissors.", emoji="✂"
-            ),
+                label="Découvre Magarcane", description="Un résumé te fera du bien", emoji="📑"),
             discord.SelectOption(
-                label="Rock", description="You choose rock.", emoji="🪨"
-            ),
+                label="Personnage", description="Besoin d'une info sur un personnage?", emoji="<:1:1217749947139751966>"),
             discord.SelectOption(
-                label="Paper", description="You choose paper.", emoji="🧻"
-            ),
+                label="Random fact", description="Petit fait croustillant?", emoji="🕵🏼"),
         ]
         super().__init__(
-            placeholder="Choose...",
+            placeholder="Choisis...",
             min_values=1,
             max_values=1,
             options=options,
@@ -97,66 +90,13 @@ class Fun(commands.Cog, name="fun"):
     def __init__(self, bot) -> None:
         self.bot = bot
 
-    @commands.hybrid_command(name="randomfact", description="Get a random fact.")
-    async def randomfact(self, context: Context) -> None:
-        """
-        Get a random fact.
 
-        :param context: The hybrid command context.
-        """
-        # This will prevent your bot from stopping everything when doing a web request - see: https://discordpy.readthedocs.io/en/stable/faq.html#how-do-i-make-a-web-request
-        async with aiohttp.ClientSession() as session:
-            async with session.get(
-                "https://uselessfacts.jsph.pl/random.json?language=en"
-            ) as request:
-                if request.status == 200:
-                    data = await request.json()
-                    embed = discord.Embed(description=data["text"], color=0xD75BF4)
-                else:
-                    embed = discord.Embed(
-                        title="Error!",
-                        description="There is something wrong with the API, please try again later",
-                        color=0xE02B2B,
-                    )
-                await context.send(embed=embed)
-
-    @commands.hybrid_command(
-        name="coinflip", description="Make a coin flip, but give your bet before."
-    )
-    async def coinflip(self, context: Context) -> None:
-        """
-        Make a coin flip, but give your bet before.
-
-        :param context: The hybrid command context.
-        """
-        buttons = Choice()
-        embed = discord.Embed(description="What is your bet?", color=0xBEBEFE)
-        message = await context.send(embed=embed, view=buttons)
-        await buttons.wait()  # We wait for the user to click a button.
-        result = random.choice(["heads", "tails"])
-        if buttons.value == result:
-            embed = discord.Embed(
-                description=f"Correct! You guessed `{buttons.value}` and I flipped the coin to `{result}`.",
-                color=0xBEBEFE,
-            )
-        else:
-            embed = discord.Embed(
-                description=f"Woops! You guessed `{buttons.value}` and I flipped the coin to `{result}`, better luck next time!",
-                color=0xE02B2B,
-            )
-        await message.edit(embed=embed, view=None, content=None)
-
-    @commands.hybrid_command(
-        name="rps", description="Play the rock paper scissors game against the bot."
-    )
-    async def rock_paper_scissors(self, context: Context) -> None:
-        """
-        Play the rock paper scissors game against the bot.
-
-        :param context: The hybrid command context.
-        """
+    @commands.hybrid_command(name="rps", description="Play the rock paper scissors game against the bot.")
+    async def rock_paper_scissors(self, ctx: Context) -> None:
+		bot = ctx.guild.get_member(self.bot.user.id)
         view = RockPaperScissorsView()
-        await context.send("Please make your choice", view=view)
+		embed = discord.Embed(title="Salut! Chevalier de Magarcane. Que veux tu apprendre aujourd'hui?",description="",color=bot.color)
+        await ctx.send("Choisis une option", view=view)
 
 
 async def setup(bot) -> None:
