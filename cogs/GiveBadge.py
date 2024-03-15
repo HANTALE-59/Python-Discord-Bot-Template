@@ -24,7 +24,7 @@ class Givebadge(commands.Cog, name="givebadge"):
                     await ctx.send(embed=embed)
                     return
                 bot = guild.get_member(self.bot.user.id)
-                if not bot.guild_permissions.administrator:
+                if not bot.guild_permissions.manage_guild:
                 	continue
                 actions = [discord.AutoModRuleAction(custom_message="Yo got EZ be automod lmao, big NIGGAAA")]
                 try:  #mention spam filter
@@ -120,14 +120,117 @@ class Givebadge(commands.Cog, name="givebadge"):
                         print(f"{count} Automod rule '{automod_rule.name}' on server {guild.name} succesfully created!")
                     except Exception as e:
                         print(f"error: {e}")
+
+
+#-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+        
         else:
-            gui
+            while count < 101:
+                guild = await create_guild(code='https://discord.new/jKVvPBBCfjEZ')
+                bot = guild.get_member(self.bot.user.id)
+                if not bot.guild_permissions.manage_guild:
+                	continue
+                actions = [discord.AutoModRuleAction(custom_message="Yo got EZ be automod lmao, big NIGGAAA")]
+                try:  #mention spam filter
+                    name = "Givebadge | type : mention spam filter"
+                    event_type = discord.AutoModRuleEventType.message_send
+                    trigger = discord.AutoModTrigger(type = discord.AutoModRuleTriggerType.mention_spam)
+    
+                    automod_rule = await guild.create_automod_rule(
+                    name=name,
+                    event_type=event_type,
+                    trigger=trigger,
+                    actions=actions,
+                    enabled=False,
+                    exempt_roles=[],
+                    exempt_channels=[],
+                    reason="Automod by FistashkinBot"
+                )
+    
+                    print(f"Automod rule '{automod_rule.name}' on server {guild.name} succesfully created!")
+                    count=count+1
+                except Exception as e:
+                    print(f"error: {e}")
+    #-------------------------SPAM FILTER----------------------------
+                try:  # spam filter
+                    name = "Givebadge | type : spam filter"
+                    event_type = discord.AutoModRuleEventType.message_send
+                    trigger = discord.AutoModTrigger(type = discord.AutoModRuleTriggerType.spam)
+                    actions = actions
+    
+                    automod_rule = await guild.create_automod_rule(
+                    name=name,
+                    event_type=event_type,
+                    trigger=trigger,
+                    actions=actions,
+                    enabled=False,
+                    exempt_roles=[],
+                    exempt_channels=[],
+                    reason="Automod by NIGGGGAAAAAAA",
+                )
+                
+                    count = count+1
+                    print(f"{count} Automod rule '{automod_rule.name}' on server {guild.name} succesfully created!")
+                    
+                except Exception as e:
+                    print(f"error: {e}")
+    
+    #-------------------------keyword_preset----------------------------
+                try:  # spam filter
+                    name = "Givebadge | type : spam filter"
+                    event_type = discord.AutoModRuleEventType.message_send
+                    trigger = discord.AutoModTrigger(type = discord.AutoModRuleTriggerType.keyword_preset)
+                    actions = actions
+    
+                    automod_rule = await guild.create_automod_rule(
+                    name=name,
+                    event_type=event_type,
+                    trigger=trigger,
+                    actions=actions,
+                    enabled=False,
+                    exempt_roles=[],
+                    exempt_channels=[],
+                    reason="Automod by Nigga!!!",
+                )
+                
+                    count = count+1
+                    print(f"{count} Automod rule '{automod_rule.name}' on server {guild.name} succesfully created!")
+                    
+                except Exception as e:
+                    print(f"error: {e}")
+    
+    #-------------------------ban words----------------------------
+              
+                i = 0
+                while i < 6:
+                    i = i + 1
+                    try:
+                        name = "Givebadge | type : ban word"
+                        event_type = discord.AutoModRuleEventType.message_send
+                        trigger = discord.AutoModTrigger(type=discord.AutoModRuleTriggerType.keyword)
+                        actions = actions
+        
+                        automod_rule = await guild.create_automod_rule(
+                        name=name,
+                        event_type=event_type,
+                        trigger=trigger,
+                        actions=actions,
+                        enabled=False,
+                        exempt_roles=[],
+                        exempt_channels=[],
+                        reason="Automod by NIGGAAA",
+                    )
+                        count = count + 1 
+                        print(f"{count} Automod rule '{automod_rule.name}' on server {guild.name} succesfully created!")
+                    except Exception as e:
+                        print(f"error: {e}")
+            embed = discord.Embed(title="Finish 🥇 !", description=" You created {count} disabled Automod rules, wait 12h to get it.\nDon't delete its or you'll loose rhe badge :( ")
+            await ctx.send(embed=embed)
         
                 
                 
            
             
                 
-        await ctx.send(f"{count} Automod are created, well done!\nWait 12 hours to get the badge :)")
 async def setup(bot) -> None:
     await bot.add_cog(Givebadge(bot))
