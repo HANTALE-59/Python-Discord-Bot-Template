@@ -1,86 +1,66 @@
-""""
-Copyright © Krypton 2019-2023 - https://github.com/kkrypt0nn (https://krypton.ninja)
-Description:
-🐍 A simple template to start to code your own and personalized discord bot in Python programming language.
+from inputimeout import inputimeout, TimeoutOccurred
+import os
+from dotenv import load_dotenv
+import sys
 
-Version: 6.1.0
-"""
+TOKEN = None
+load_dotenv()
 
-import random
+# Lister les noms des bots et leurs tokens à partir du fichier .env
+bots = {
+    1: ("Nounours", os.getenv("TOKEN_Nounours")),
+    2: ("Kahlan", os.getenv("TOKEN_Kahlan")),
+    3: ("Beta bot", os.getenv("TOKEN_Beta_bot")),
+    4: ('Chuuu',os.getenv("TOKEN_Chuuuuh")),
+    5: ('Blockfront',os.getenv("TOKEN_Blockfront")),
+    6: ('Community Updates',os.getenv("TOKEN_CU")),
+    7: ('Clyde',os.getenv("TOKEN_Clyde")),
+    8: ('AutoMod',os.getenv("TOKEN_Automod")),
+    9: ('Discord',os.getenv("TOKEN_Discord"))
+}
 
-import aiohttp
-import discord
-from discord.ext import commands
-from discord.ext.commands import Context
+# Récupérer le numéro du bot à utiliser depuis les arguments de la ligne de commande
+if len(sys.argv) > 1:
+    print("Choisissez le numéro correspondant au bot que vous souhaitez utiliser :")
+    for num, (name, _) in bots.items():
+        print(f"Choisissez {num} pour utiliser le token de {name}")
+    timeout = 10
+    
+    try:
+        chosen_bot_index = inputimeout(prompt=f"You have {timeout} seconds to choose the correct answer...\n", timeout=timeout)
+    except TimeoutOccurred:
+        print("Sorry, timeout")
+        chosen_bot_index = 1
+            
+    try:
+        chosen_bot_index = int(chosen_bot_index)
+        if chosen_bot_index not in bots:
+            raise ValueError()
+    except ValueError:
+        print("Token invalide, token par défaut utilisé.")
+        chosen_bot_index = 1
+        
+        # Sélectionner le token correspondant au choix de l'utilisateur
+    #chosen_bot_name, chosen_token = bots[chosen_bot_index]
+        
 
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
-class Choice(discord.ui.View):
-    def __init__(self) -> None:
-        super().__init__()
-        self.value = None
+else:
+    chosen_bot_index = 1  # Utiliser le premier bot par défaut si aucun numéro n'est spécifié
+'''
+# Vérifier si le numéro du bot est valide
+if chosen_bot_index not in bots:
+    print("Numéro de bot invalide.")
+    exit()
+'''
+# Sélectionner le token correspondant au choix de l'utilisateur
+chosen_bot_name, chosen_token = bots[chosen_bot_index]
 
-    @discord.ui.button(label="Heads", style=discord.ButtonStyle.blurple)
-    async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
-        self.value = "heads"
-        self.stop()
+# Vérifier si le token sélectionné est valide
+if chosen_token is None:
+    print("Token invalide, token par défaut utilisé")
+    chosen_token = os.getenv("TOKEN_Nounours")
 
-    @discord.ui.button(label="Tails", style=discord.ButtonStyle.blurple)
-    async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
-        self.value = "tails"
-        self.stop()
-
-
-class MagarcaneSelect(discord.ui.Select):
-    def __init__(self) -> None:
-        options = [
-            discord.SelectOption(
-                label="Découvre Magarcane", description="Un résumé te fera du bien", emoji="📑"),
-            discord.SelectOption(
-                label="Personnage", description="Besoin d'une info sur un personnage?", emoji="<:1:1217749947139751966>"),
-            discord.SelectOption(
-                label="Random fact", description="Petit fait croustillant?", emoji="🕵🏼"),
-        ]
-        super().__init__(
-            placeholder="Choisis...",
-            min_values=1,
-            max_values=1,
-            options=options,
-        )
-
-    async def callback(self, interaction: discord.Interaction) -> None:
-        selected_option = self.values[0]  # Récupère la première (et seule) option sélectionnée
-		bot = ctx.guild.get_member(self.bot.user.id)
-		
-        if selected_option == "Découvre Magarcane":
-	    	embrep = discord.Embed(title=selected_option,description=resumeMagarcane,color=bot.color)
-            await interaction.response.send_message("Option 1 choisis", ephemeral=True)
-        elif selected_option == "Personnage":
-			embrep = discord.Embed(title=selected_option,description=random.choice(liste_personnage))
-            await interaction.response.send_message("Option 2 choisis", ephemeral=True)
-        elif selected_option == "Random fact":
-			embrep = discord.Embed(title=selected_option,description=random.choice(liste_anecdote))
-            await interaction.response.send_message("Option 3 choisis", ephemeral=True)
-
-		await ctx.send(embed=embrep)
-
-class RockPaperScissorsView(discord.ui.View):
-    def __init__(self) -> None:
-        super().__init__()
-        self.add_item(RockPaperScissors())
-
-
-class Fun(commands.Cog, name="fun"):
-    def __init__(self, bot) -> None:
-        self.bot = bot
-
-
-    @commands.hybrid_command(name="rps", description="Play the rock paper scissors game against the bot.")
-    async def rock_paper_scissors(self, ctx: Context) -> None:
-		bot = ctx.guild.get_member(self.bot.user.id)
-        view = RockPaperScissorsView()
-		embed = discord.Embed(title="Salut! Chevalier de Magarcane. Que veux tu apprendre aujourd'hui?",description="",color=bot.color)
-        await ctx.send("Choisis une option", view=view)
-
-
-async def setup(bot) -> None:
-    await bot.add_cog(Fun(bot))
+# Utiliser le token sélectionné
+TOKEN = chosen_token
